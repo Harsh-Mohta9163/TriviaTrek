@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+    <style>
+        /* Background with gradient overlay */
+        .header-masthead {
+            padding-top: 10rem;
+            padding-bottom: calc(10rem - 4.5rem);
+            background: linear-gradient(to bottom, rgba(92, 77, 66, 0.5) 0%, rgba(92, 77, 66, 0.7) 100%), url("{% static 'img/human_brain1.jpg' %}");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: scroll;
+            background-size: contain; /* Use cover for full coverage */
+            text-align: center; /* Center text and content within header */
+        }
+
+        .content-container {
+            background: rgba(255, 255, 255, 0.8); /* White background with opacity */
+            padding: 20px;
+            border-radius: 8px;
+            margin: 0 auto; /* Center the container horizontally */
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .card-container {
+            margin: 20px 0;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <header class="header-masthead">
+        <div class="content-container">
+            <h1 class="display-4 mb-4">Welcome to TriviaTrek</h1>
+            <p class="lead mb-5">Join a quiz or create a new one below:</p>
+            <!-- Input boxes -->
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Enter the invite link to join a quiz" aria-label="Invite link">
+                        <button class="btn btn-primary" type="button">Join Quiz</button>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Create a new quiz" aria-label="Create quiz">
+                        <button class="btn btn-success" type="button">Create Quiz</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cards for prebuilt quiz templates -->
+    <section class="container card-container">
+        <h2 class="text-center mb-4">Prebuilt Quiz Templates</h2>
+        <div class="row">
+            <!-- Example card 1 -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{% static 'img/quiz_template_1.jpg' %}" class="card-img-top" alt="Quiz Template 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Quiz Template 1</h5>
+                        <p class="card-text">Description of the quiz template.</p>
+                        <a href="#" class="btn btn-primary">Use Template</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Example card 2 -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{% static 'img/quiz_template_2.jpg' %}" class="card-img-top" alt="Quiz Template 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Quiz Template 2</h5>
+                        <p class="card-text">Description of the quiz template.</p>
+                        <a href="#" class="btn btn-primary">Use Template</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Add more cards as needed -->
+        </div>
+    </section>
+{% endblock %}
