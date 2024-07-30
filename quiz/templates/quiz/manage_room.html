@@ -1,0 +1,20 @@
+{% comment %} {% extends "base.html" %}
+{% block title %}Manage Quiz Room{% endblock title %}
+{% block content %}
+    <div class="container">
+        <h2>Manage Quiz Room: {{ quiz_room.room_name }}</h2>
+        <p>Invite Link: <a href="{% url 'join_room' quiz_room.id %}">{{ request.build_absolute_uri }}</a></p>
+        <h3>Members</h3>
+        <ul>
+            {% for member in quiz_room.members.all %}
+                <li>{{ member.username }}</li>
+            {% endfor %}
+        </ul>
+        <form method="post" action="{% url 'start_quiz' quiz_room.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Start Quiz</button>
+        </form>
+    </div>
+{% endblock %} {% endcomment %}
+
+<h1>success</h1>

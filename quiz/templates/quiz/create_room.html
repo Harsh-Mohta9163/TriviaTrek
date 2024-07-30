@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Create Room{% endblock title %}
+{% block content %}
+    <div class="container">
+        <h2>Add Questions to {{ quiz_room.room_name }}</h2>
+        <div id="questions-container"></div>
+        <form method="post" hx-post="{% url 'add_question' quiz_room.id %}" hx-target="#questions-container" hx-swap="beforeend" _="on htmx:afterRequest reset() me">
+            {% csrf_token %}
+            {{ question_form|crispy }}
+            <button type="submit" class="btn btn-primary">Save Question</button>
+        </form>
+        
+        <a href="{% url 'manage_quiz_room' quiz_room.id %}" class="btn btn-success mt-3">Submit</a>
+    </div>
+{% endblock %}

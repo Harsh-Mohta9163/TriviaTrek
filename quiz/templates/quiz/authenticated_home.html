@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% block title %}Home{% endblock title %}
 {% block head %}
     <style>
-        /* Background with gradient overlay */
         .header-masthead {
             padding-top: 10rem;
             padding-bottom: calc(10rem - 4.5rem);
@@ -10,15 +10,15 @@
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: scroll;
-            background-size: contain; /* Use cover for full coverage */
-            text-align: center; /* Center text and content within header */
+            background-size: contain;
+            text-align: center;
         }
 
         .content-container {
-            background: rgba(255, 255, 255, 0.8); /* White background with opacity */
+            background: rgba(255, 255, 255, 0.8);
             padding: 20px;
             border-radius: 8px;
-            margin: 0 auto; /* Center the container horizontally */
+            margin: 0 auto;
             width: 80%;
             max-width: 600px;
         }
@@ -38,27 +38,27 @@
         <div class="content-container">
             <h1 class="display-4 mb-4">Welcome to TriviaTrek</h1>
             <p class="lead mb-5">Join a quiz or create a new one below:</p>
-            <!-- Input boxes -->
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" placeholder="Enter the invite link to join a quiz" aria-label="Invite link">
                         <button class="btn btn-primary" type="button">Join Quiz</button>
                     </div>
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Create a new quiz" aria-label="Create quiz">
-                        <button class="btn btn-success" type="button">Create Quiz</button>
-                    </div>
+                    <form method="post" action="{% url 'create_quiz_room' %}">
+                        {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="room_name" placeholder="Enter the quiz name" aria-label="Quiz name" required>
+                            <button class="btn btn-success" type="submit">Create Quiz</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Cards for prebuilt quiz templates -->
     <section class="container card-container">
         <h2 class="text-center mb-4">Prebuilt Quiz Templates</h2>
         <div class="row">
-            <!-- Example card 1 -->
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <img src="{% static 'img/quiz_template_1.jpg' %}" class="card-img-top" alt="Quiz Template 1">
@@ -69,7 +69,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Example card 2 -->
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <img src="{% static 'img/quiz_template_2.jpg' %}" class="card-img-top" alt="Quiz Template 2">
@@ -80,7 +79,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Add more cards as needed -->
         </div>
     </section>
 {% endblock %}
