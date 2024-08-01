@@ -1,20 +1,46 @@
-{% comment %} {% extends "base.html" %}
-{% block title %}Manage Quiz Room{% endblock title %}
+{% extends 'base.html' %}
 {% block content %}
-    <div class="container">
-        <h2>Manage Quiz Room: {{ quiz_room.room_name }}</h2>
-        <p>Invite Link: <a href="{% url 'join_room' quiz_room.id %}">{{ request.build_absolute_uri }}</a></p>
-        <h3>Members</h3>
-        <ul>
-            {% for member in quiz_room.members.all %}
-                <li>{{ member.username }}</li>
-            {% endfor %}
-        </ul>
-        <form method="post" action="{% url 'start_quiz' quiz_room.id %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-success">Start Quiz</button>
-        </form>
-    </div>
-{% endblock %} {% endcomment %}
+<div class="manage-quiz-container">
+    <h2>Manage Quiz Room: {{ quiz_room.room_name }}</h2>
+    <p>Share this invite link with participants: <span id="invite-link">http://localhost:8000/quiz/{{ quiz_room.id }}/waiting_room/</span></p>
+    <button onclick="copyToClipboard('#invite-link')">Copy Link</button>
 
-<h1>success</h1>
+    <h3>Participants</h3>
+    <div id="members-list">
+        {% for member in members %}
+            <p>{{ member.username }}</p>
+        {% empty %}
+            <p>No participants yet.</p>
+        {% endfor %}
+    </div>
+
+    <form id="start-quiz-form" method="post" 
+        hx-ext="ws" 
+        ws-connect="/ws/quiz/{{ quiz_room.id }}"     
+        ws-send="{'command': 'start_quiz'}">
+        {% csrf_token %}
+        <input type="hidden" name="command" value="start_quiz">
+        <button type="submit" class="btn btn-primary">Start Quiz</button>
+    </form>
+    
+</div>
+
+<script>
+function copyToClipboard(selector) {
+    const element = document.querySelector(selector);
+    const range = document.createRange();
+    range.selectNode(element);
+    window.getSelection().removeAllRanges(); 
+    window.getSelection().addRange(range); 
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+}
+
+// Redirect the admin directly to the leaderboard page after starting the quiz
+document.querySelector("#start-quiz-form").addEventListener('submit', function() {
+    setTimeout(function() {
+        window.location.href = '/quiz/{{ quiz_room.id }}/leaderboard/';
+    }, 1000);  // slight delay to allow the WebSocket message to process
+});
+</script>
+{% endblock %}

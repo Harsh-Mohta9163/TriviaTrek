@@ -41,8 +41,8 @@
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Enter the invite link to join a quiz" aria-label="Invite link">
-                        <button class="btn btn-primary" type="button">Join Quiz</button>
+                        <input type="text" id="invite-link-input" class="form-control" placeholder="Enter the invite link to join a quiz" aria-label="Invite link">
+                        <button class="btn btn-primary" type="button" onclick="joinQuiz()">Join Quiz</button>
                     </div>
                     <form method="post" action="{% url 'create_quiz_room' %}">
                         {% csrf_token %}
@@ -81,4 +81,15 @@
             </div>
         </div>
     </section>
+    
+    <script>
+        function joinQuiz() {
+            const inviteLink = document.getElementById('invite-link-input').value;
+            if (inviteLink) {
+                window.location.href = inviteLink;
+            } else {
+                alert('Please enter a valid invite link.');
+            }
+        }
+    </script>
 {% endblock %}

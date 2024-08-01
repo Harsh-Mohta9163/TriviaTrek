@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% comment %} {% block content %}
+<div class="waiting-room">
+    <h2>Waiting Room for Quiz: {{ quiz_room.room_name }}</h2>
+    <p>Please wait for the admin to start the quiz.</p>
+    <div id="waiting-room-content" hx-ext="ws" ws-connect="/ws/quiz/{{ quiz_room.id }}">
+        <!-- Instructions or other content -->
+    </div>
+</div>
+
+<script>
+    console.log("JavaScript is running");
+    document.body.addEventListener('htmx:wsMessage', (event) => {
+        console.log("WebSocket message received:", event.detail.data);
+        const data = JSON.parse(event.detail.data);
+        if (data.event === 'redirect') {
+            console.log("Redirecting to:", data.redirect_url);
+            window.location.href = data.redirect_url;
+        }
+    });
+</script>
+{% endblock %} {% endcomment %}
+{% block content %}
+<div class="waiting-room">
+    <h2>Waiting Room for Quiz: {{ quiz_room.room_name }}</h2>
+    <p>Please wait for the admin to start the quiz.</p>
+</div>
+
+<script>
+    console.log("JavaScript is running");
+
+    // Establish WebSocket connection
+    const ws = new WebSocket(`ws://${window.location.host}/ws/quiz/{{ quiz_room.id }}`);
+
+    ws.onopen = function() {
+        console.log("WebSocket connection established");
+    };
+
+    ws.onmessage = function(event) {
+        console.log("WebSocket message received:", event.data);
+        const data = JSON.parse(event.data);
+        if (data.event === 'redirect') {
+            console.log("Redirecting to:", data.redirect_url);
+            window.location.href = data.redirect_url;
+        }
+    };
+
+    ws.onclose = function() {
+        console.log("WebSocket connection closed");
+    };
+
+    ws.onerror = function(error) {
+        console.error("WebSocket error:", error);
+    };
+</script>
+
+{% endblock content %}

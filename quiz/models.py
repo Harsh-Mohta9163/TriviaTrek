@@ -20,6 +20,7 @@ class Question(models.Model):
     correct_option = models.CharField(max_length=1, choices=[('A', 'Option A'), ('B', 'Option B'), ('C', 'Option C'), ('D', 'Option D')])
     score_per_question = models.IntegerField(help_text="Score awarded for this question")
     time_allotted_per_question = models.IntegerField(help_text="Time allotted per question in seconds")
+    question_number = models.IntegerField(help_text="The order of the question in the quiz")
 
     def __str__(self):
         return self.text
