@@ -11,4 +11,5 @@ urlpatterns = [
     path('quiz/<int:quiz_room_id>/waiting_room/', waiting_room, name='waiting_room'),
     path('quiz/<int:quiz_room_id>/leaderboard/', leaderboard, name='leaderboard'),
     path('quiz/<int:quiz_room_id>/questions/', questions, name='questions'),
+    path('quiz/<int:quiz_room_id>/check-answer/<int:question_number>/', check_answer, name='check_answer')
 ]

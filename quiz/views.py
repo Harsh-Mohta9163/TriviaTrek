@@ -7,6 +7,7 @@ from django.views import View
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponse
+import json
 
 def home_view(request):
     if request.user.is_authenticated:
@@ -68,8 +69,48 @@ def leaderboard(request, quiz_room_id):
     ]
     return render(request, 'quiz/leaderboard.html', {'quiz_room': quiz_room, 'leaderboard_data': leaderboard_data})
 
+# def questions(request, quiz_room_id):
+#     print("entered")
+#     quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
+#     questions = quiz_room.questions.order_by('question_number')
+#     return render(request,'quiz/questions.html', {'quiz_room': quiz_room, 'questions': questions})
+
+
 def questions(request, quiz_room_id):
-    print("entered")
     quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
-    questions = quiz_room.questions.order_by('question_number')
-    return render(request,'quiz/questions.html', {'quiz_room': quiz_room, 'questions': questions})
+    question_number = int(request.GET.get('question_number', 1))
+    current_question = quiz_room.questions.order_by('question_number').filter(question_number=question_number).first()
+    
+    if current_question is None:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'quiz_finished': True})
+        return render(request, 'quiz/finished.html', {'quiz_room': quiz_room})
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        html = render_to_string('quiz/partials/quiz_display.html', {
+            'quiz_room': quiz_room, 
+            'current_question': current_question
+        })
+        return JsonResponse({
+            'html': html,
+            'question_number': current_question.question_number,
+            'time_limit': current_question.time_allotted_per_question
+        })
+
+    return render(request, 'quiz/questions.html', {
+        'quiz_room': quiz_room,
+        'current_question': current_question
+    })
+
+
+def check_answer(request, quiz_room_id, question_number):
+    if request.method == 'POST':
+        quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
+        current_question = get_object_or_404(Question, quiz_room=quiz_room, question_number=question_number)
+        data = json.loads(request.body)
+        selected_option = data.get('selected_option')
+
+        is_correct = (selected_option == current_question.correct_option)
+        
+        return JsonResponse({'is_correct': is_correct})
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

@@ -9,12 +9,12 @@
     width: 100%;
     min-height: 100vh;
     background-color: #fbfaff;
-    /* Remove flex display */
-}
-
-/* Center the main content instead of the body */
-main {
-    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  main {
     width: 40rem;
     height: 43rem;
     background-color: #ffffff;
@@ -24,22 +24,16 @@ main {
     flex-direction: column;
     align-items: center;
     border-radius: 0.5rem;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-/* Keep the rest of your styles as they are */
-#header {
+  }
+  
+  #header {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 2.5rem 2rem;
-}
-
-/* ... (rest of your CSS) ... */
-
+  }
+  
   .share {
     width: 4.5rem;
     height: 3rem;

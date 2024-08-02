@@ -1,0 +1,93 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Rubik', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-image: url("../img/human_brain1.jpg"); */
+    background: linear-gradient(to bottom, rgba(92, 77, 66, 0.5) 0%, rgba(92, 77, 66, 0.7) 100%), url("../img/questions_background.jpg");
+    background-size: contain;
+    background-position: center;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.timer {
+    position: fixed; /* Changed to fixed to position relative to the page */
+    top: 20px;
+    right: 20px;
+    width: 120px;
+    height: 120px;
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    color: blue; /* Start with green */
+    font-weight: bold;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    transition: color 0.3s; /* Smooth transition for color change */
+    z-index: 1000; /* Ensure it stays above other elements */
+}
+
+.question-box {
+    background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent background */
+    width: 90%; /* Cover more space */
+    max-width: 1400px; /* Set a max width to keep it from being too wide on large screens */
+    height: 80%; /* Increase height */
+    padding: 3rem;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white; /* White text for visibility */
+    position: relative;
+}
+
+.question {
+    font-size: 2rem; /* Larger text */
+    margin-bottom: 2rem;
+    max-width: 90%; /* Prevent overflow */
+}
+
+.options {
+    list-style-type: none;
+    padding: 0;
+    width: 100%; /* Wider options */
+    max-width: 1200px; /* Set max-width for options list */
+}
+
+.option {
+    background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent options */
+    margin: 1rem 0; /* More space between options */
+    padding: 1.5rem; /* Increase padding */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 1.5rem; /* Larger text in options */
+    color: #000; /* Black text for visibility */
+}
+
+.option:hover {
+    background-color: rgba(20, 20, 20, 0.8);
+}
+
+.option.correct {
+    background-color: green;
+    color: white;
+}
+
+.option.wrong {
+    background-color: red; /* Red for wrong answer */
+    color: white;
+}
+
+.option.selected {
+    background-color: black;
+    color: white;
+}

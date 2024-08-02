@@ -1,0 +1,11 @@
+<div class="question-box">
+    <div class="question">
+        {{ current_question.text }}
+    </div>
+    <ul class="options">
+        <li class="option" data-option="A" onclick="selectOption(this)">A) {{ current_question.option_a }}</li>
+        <li class="option" data-option="B" onclick="selectOption(this)">B) {{ current_question.option_b }}</li>
+        <li class="option" data-option="C" onclick="selectOption(this)">C) {{ current_question.option_c }}</li>
+        <li class="option" data-option="D" onclick="selectOption(this)">D) {{ current_question.option_d }}</li>
+    </ul>
+</div> 
