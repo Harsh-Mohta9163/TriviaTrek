@@ -24,3 +24,11 @@ class Question(models.Model):
 
     def __str__(self):
         return self.text
+
+class Score(models.Model):
+    quiz_room = models.ForeignKey(QuizRoom, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    points = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.points}"

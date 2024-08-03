@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import QuizRoom, Question
+from .models import QuizRoom, Question, Score
 
 class QuizRoomAdmin(admin.ModelAdmin):
     list_display = ('room_name', 'admin', 'created_at')
@@ -10,5 +10,11 @@ class QuestionAdmin(admin.ModelAdmin):
     list_filter = ('quiz_room',)
     search_fields = ('text', 'quiz_room__room_name')
 
+class ScoreAdmin(admin.ModelAdmin):
+    list_display = ('user', 'quiz_room', 'points')
+    list_filter = ('quiz_room', 'user')
+    search_fields = ('user__username', 'quiz_room__room_name')
+
 admin.site.register(QuizRoom, QuizRoomAdmin)
 admin.site.register(Question, QuestionAdmin)
+admin.site.register(Score, ScoreAdmin)

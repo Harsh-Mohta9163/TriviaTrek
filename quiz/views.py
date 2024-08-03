@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import QuizRoom, Question
+from .models import QuizRoom, Question,Score
 from .forms import QuizRoomForm,QuestionForm
 from django.views import View
 from django.http import HttpResponse
@@ -15,6 +15,7 @@ def home_view(request):
     else:
         return render(request, 'quiz/home.html')
 
+@login_required
 def create_quiz_room(request):
     if request.method == 'POST':
         room_name = request.POST.get('room_name')
@@ -23,11 +24,13 @@ def create_quiz_room(request):
             return redirect('create_room', quiz_room_id=quiz_room.id)
     return redirect('home')
 
+@login_required
 def create_room(request, quiz_room_id):
     quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
     question_form = QuestionForm()
     return render(request, 'quiz/create_room.html', {'quiz_room': quiz_room, 'question_form': question_form})
 
+@login_required
 def add_question(request, quiz_room_id):
     quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
     if request.method == 'POST':
@@ -42,7 +45,7 @@ def add_question(request, quiz_room_id):
     return HttpResponse(status=400)
 
 
-
+@login_required
 def manage_quiz_room(request, quiz_room_id):
     quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
     members = quiz_room.members.all()  # Assuming you have a ManyToMany or ForeignKey relationship with users
@@ -51,31 +54,14 @@ def manage_quiz_room(request, quiz_room_id):
         'members': members
     })
 
-
+@login_required
 def waiting_room(request, quiz_room_id):
     quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
     return render(request, 'quiz/waiting_room.html', {'quiz_room': quiz_room})
 
-def leaderboard(request, quiz_room_id):
-    quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
-    # Logic to fetch leaderboard data
-    # Replace the placeholder data with actual user scores
-    leaderboard_data = [
-        {'number': 1, 'name': 'Lee Taeyong', 'points': 258.244},
-        {'number': 2, 'name': 'Mark Lee', 'points': 258.242},
-        {'number': 3, 'name': 'Xiao Dejun', 'points': 258.223},
-        {'number': 4, 'name': 'Qian Kun', 'points': 258.212},
-        {'number': 5, 'name': 'Johnny Suh', 'points': 258.208},
-    ]
-    return render(request, 'quiz/leaderboard.html', {'quiz_room': quiz_room, 'leaderboard_data': leaderboard_data})
+   
 
-# def questions(request, quiz_room_id):
-#     print("entered")
-#     quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
-#     questions = quiz_room.questions.order_by('question_number')
-#     return render(request,'quiz/questions.html', {'quiz_room': quiz_room, 'questions': questions})
-
-
+@login_required
 def questions(request, quiz_room_id):
     quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
     question_number = int(request.GET.get('question_number', 1))
@@ -84,7 +70,7 @@ def questions(request, quiz_room_id):
     if current_question is None:
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({'quiz_finished': True})
-        return render(request, 'quiz/finished.html', {'quiz_room': quiz_room})
+        return render(request, 'quiz/leaderboard.html')
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         html = render_to_string('quiz/partials/quiz_display.html', {
@@ -102,8 +88,9 @@ def questions(request, quiz_room_id):
         'current_question': current_question
     })
 
-
+@login_required
 def check_answer(request, quiz_room_id, question_number):
+    print("entered")
     if request.method == 'POST':
         quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
         current_question = get_object_or_404(Question, quiz_room=quiz_room, question_number=question_number)
@@ -114,3 +101,23 @@ def check_answer(request, quiz_room_id, question_number):
         
         return JsonResponse({'is_correct': is_correct})
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@login_required
+def leaderboard(request, quiz_room_id):
+    quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
+    
+    # Create score objects for all members except the admin, if they don't already exist
+    for member in quiz_room.members.exclude(id=quiz_room.admin.id):
+        Score.objects.get_or_create(quiz_room=quiz_room, user=member)
+    
+    # Fetch the leaderboard data
+    leaderboard = Score.objects.filter(quiz_room=quiz_room).order_by('-points')
+    leaderboard_data = [
+        {'number': idx + 1, 'name': score.user.username, 'points': score.points}
+        for idx, score in enumerate(leaderboard)
+    ]
+    
+    return render(request, 'quiz/leaderboard.html', {
+        'quiz_room': quiz_room,
+        'leaderboard_data': leaderboard_data
+    })

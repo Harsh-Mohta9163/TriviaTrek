@@ -1,4 +1,4 @@
-{% load static %}
+{% comment %} {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -90,26 +90,6 @@
         });
     }
 
-    {% comment %} function loadNextQuestion() {
-        const questionNumber = parseInt(document.getElementById('question-container').getAttribute('data-question-number')) + 1;
-        const quizRoomId = "{{ quiz_room.id }}";
-        const url = `/quiz/${quizRoomId}/questions/?question_number=${questionNumber}`;
-
-        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-            .then(response => response.json())
-            .then(data => {
-                if (data.quiz_finished) {
-                    window.location.href = "/quiz/{{ quiz_room.id }}/finished/";
-                } else {
-                    document.getElementById('question-container').innerHTML = data.html;
-                    const newTimeLimit = parseInt(document.getElementById('question-container').getAttribute('data-time-limit'));
-                    
-                    // Reset selected option and timer for new question
-                    selectedOptionElement = null;
-                    startTimer(newTimeLimit);
-                }
-            });
-    } {% endcomment %}
 
     function loadNextQuestion() {
         const questionNumber = parseInt(document.getElementById('question-container').getAttribute('data-question-number')) + 1;
@@ -120,7 +100,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.quiz_finished) {
-                    window.location.href = "/quiz/{{ quiz_room.id }}/finished/";
+                    window.location.href = "/quiz/{{ quiz_room.id }}/leaderboard/";
                 } else {
                     document.getElementById('question-container').innerHTML = data.html;
                     
@@ -142,6 +122,157 @@
     }
     
 
+    window.onload = function () {
+        const timeLimit = parseInt(document.getElementById('question-container').getAttribute('data-time-limit'));
+        startTimer(timeLimit);
+    };
+</script>
+
+</body>
+</html>  {% endcomment %}
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet">
+    <link href="{% static 'css/questions.css' %}" rel="stylesheet" />
+</head>
+<body>
+
+<div class="timer" id="timer"></div>
+
+<div id="question-container" data-question-number="{{ current_question.question_number }}" data-time-limit="{{ current_question.time_allotted_per_question }}">
+    {% include 'quiz/partials/quiz_display.html' %}
+</div>
+
+<script>
+    let timerInterval;
+    let selectedOptionElement = null;
+    let timeLeft; // Global variable to store the time left when an option is selected
+
+    // Initialize WebSocket connection
+    const quizSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/quiz/{{ quiz_room.id }}'
+    );
+
+    function startTimer(duration) {
+        let timer = duration, minutes, seconds;
+        const display = document.getElementById('timer');
+        
+        // Reset the timer color to initial blue state for each new question
+        display.style.color = 'blue';
+
+        timerInterval = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (timer <= 5) {
+                display.style.color = 'red';
+            }
+
+            if (--timer < 0) {
+                clearInterval(timerInterval);
+                evaluateAnswer(); // Call evaluateAnswer when the timer runs out
+            }
+        }, 1000);
+    }
+
+    function selectOption(element) {
+        if (selectedOptionElement) return; // Prevent selecting another option
+        
+        element.classList.add('selected');
+        selectedOptionElement = element;
+
+        // Disable all other options
+        document.querySelectorAll('.option').forEach(option => {
+            option.removeAttribute('onclick');
+            option.style.pointerEvents = 'none';
+        });
+
+        // Save the current time left
+        const display = document.getElementById('timer').textContent;
+        const timeParts = display.split(':');
+        timeLeft = parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
+
+        // Continue the timer until it reaches 0
+    }
+
+    function evaluateAnswer() {
+        if (!selectedOptionElement) return;
+
+        const selectedOption = selectedOptionElement.getAttribute('data-option');
+        const questionNumber = document.getElementById('question-container').getAttribute('data-question-number');
+        const quizRoomId = "{{ quiz_room.id }}";
+
+        fetch(`/quiz/${quizRoomId}/check-answer/${questionNumber}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ selected_option: selectedOption })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.is_correct) {
+                selectedOptionElement.classList.remove('selected');
+                selectedOptionElement.classList.add('correct');
+            } else {
+                selectedOptionElement.classList.remove('selected');
+                selectedOptionElement.classList.add('wrong');
+            }
+
+            // Send data to WebSocket
+            quizSocket.send(JSON.stringify({
+                'command':  'update_score',
+                'is_correct': data.is_correct,
+                'time_left': timeLeft
+            }));
+
+            setTimeout(loadNextQuestion, 2000);
+        });
+    }
+
+    function loadNextQuestion() {
+        const questionNumber = parseInt(document.getElementById('question-container').getAttribute('data-question-number')) + 1;
+        const quizRoomId = "{{ quiz_room.id }}";
+        const url = `/quiz/${quizRoomId}/questions/?question_number=${questionNumber}`;
+    
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(response => response.json())
+            .then(data => {
+                if (data.quiz_finished) {
+                    window.location.href = "/quiz/{{ quiz_room.id }}/leaderboard/";
+                } else {
+                    document.getElementById('question-container').innerHTML = data.html;
+                    
+                    // Update data-question-number and data-time-limit with the new question's values
+                    const newContainer = document.getElementById('question-container');
+                    newContainer.setAttribute('data-question-number', data.question_number);
+                    newContainer.setAttribute('data-time-limit', data.time_limit);
+    
+                    const newTimeLimit = parseInt(newContainer.getAttribute('data-time-limit'));
+                    
+                    // Reset selected option and timer for new question
+                    selectedOptionElement = null;
+                    startTimer(newTimeLimit);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading next question:', error);
+            });
+    }
+    
     window.onload = function () {
         const timeLimit = parseInt(document.getElementById('question-container').getAttribute('data-time-limit'));
         startTimer(timeLimit);
