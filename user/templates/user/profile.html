@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block head %}
+<style>
+    body {
+        background-color: #343a40; /* Dark grey background */
+    }
+    .profile-container {
+        max-width: 800px;
+        margin: auto;
+        padding-top: 60px; /* Added padding to avoid navbar overlap */
+    }
+    .profile-box {
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        position: relative;
+        text-align: center;
+    }
+    .profile-image {
+        width: 200px;
+        height: 200px;
+        overflow: hidden;
+        border-radius: 50%;
+        border: 5px solid white;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        margin: auto; /* Center the image */
+        margin-top: -50px; /* Adjust for the profile-box padding */
+        background-color: white;
+    }
+    .profile-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 50%;
+    }
+    .profile-info {
+        margin-top: 40px;
+    }
+    .profile-info h2 {
+        margin-bottom: 10px;
+    }
+    .rounded-btn {
+        border-radius: 20px;
+    }
+    .quiz-list {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom:50px;
+    }
+    .quiz-item {
+        margin-bottom: 10px;
+    }
+    .quiz-link {
+        color: #333;
+        text-decoration: none;
+        padding: 10px;
+        display: block;
+        border-radius: 10px;
+        background: #e9ecef;
+        transition: background 0.3s;
+    }
+    .quiz-link:hover {
+        background: #ced4da;
+    }
+</style>
+{% endblock head %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-box">
+        <div class="profile-image">
+             <img src="{{ user.profile.image.url }}" alt="{{ user.username }}">
+
+        </div>
+        <div class="profile-info">
+            <h2>{{ user.username }}</h2>
+            <p>{{ user.email }}</p>
+            <a href="{% url 'profile_update' %}" class="btn btn-primary rounded-btn">Edit Profile</a>
+        </div>
+    </div>
+    <div class="quiz-list">
+        <h3>Your Quizzes</h3>
+        <ul>
+            {% for quiz in user_quizzes %}
+                <li class="quiz-item">
+                    <a href="{% url 'manage_quiz_room' quiz.id %}" class="quiz-link">{{ quiz.room_name }}</a>
+                </li>
+            {% empty %}
+                <p>You have not created any quizzes yet.</p>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock content %}
