@@ -72,6 +72,18 @@
             console.log("Redirecting to:", data.redirect_url);
             window.location.href = data.redirect_url;
         }
+        if (data.event === 'redirect_remove') {
+            
+            const currentUserId = {{ request.user.id }};
+            console.log(currentUserId)
+            console.log(data.user_id)  // Get the current user's ID from Django context
+            if (data.user_id == currentUserId) {
+                console.log("h1");
+                alert(data.alert_message);
+                
+                window.location.href = data.redirect_url;
+            }
+        }
     };
 
     ws.onclose = function() {

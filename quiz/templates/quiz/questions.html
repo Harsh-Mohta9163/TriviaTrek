@@ -209,8 +209,8 @@
 
     function evaluateAnswer() {
         if (!selectedOptionElement) return;
-
         const selectedOption = selectedOptionElement.getAttribute('data-option');
+        //const selectedOption = selectedOptionElement ? selectedOptionElement.getAttribute('data-option') : null;
         const questionNumber = document.getElementById('question-container').getAttribute('data-question-number');
         const quizRoomId = "{{ quiz_room.id }}";
 
@@ -242,6 +242,7 @@
             setTimeout(loadNextQuestion, 2000);
         });
     }
+
 
     function loadNextQuestion() {
         const questionNumber = parseInt(document.getElementById('question-container').getAttribute('data-question-number')) + 1;

@@ -1,4 +1,6 @@
+
 {% extends 'base.html' %}
+{% comment %} {% extends 'base.html' %}
 {% block content %}
 <div class="manage-quiz-container">
     <h2>Manage Quiz Room: {{ quiz_room.room_name }}</h2>
@@ -38,6 +40,295 @@ function copyToClipboard(selector) {
 
 // Redirect the admin directly to the leaderboard page after starting the quiz
 document.querySelector("#start-quiz-form").addEventListener('submit', function() {
+    setTimeout(function() {
+        window.location.href = '/quiz/{{ quiz_room.id }}/leaderboard/';
+    }, 1000);  // slight delay to allow the WebSocket message to process
+});
+</script>
+{% endblock %} {% endcomment %}
+{% comment %} {% block content %}
+<div class="container">
+    <!-- Heading -->
+    <div class="text-center">
+        <h2 style="font-family: 'Arial', sans-serif;">Manage Quiz Room: {{ quiz_room.room_name }}</h2>
+    </div>
+
+    <!-- Invite link container -->
+    <div class="input-group mb-3 mx-auto" style="max-width: 500px;border-color=green">
+        <input id="invite-link" type="text" class="form-control" value="http://localhost:8000/quiz/{{ quiz_room.id }}/waiting_room/" readonly>
+        <button class="btn btn-primary" type="button" onclick="copyToClipboard('#invite-link')">Copy Link</button>
+    </div>
+
+    <!-- Alert for copy success -->
+    <div id="copy-alert" class="alert alert-success text-center" role="alert" style="display:none; max-width: 500px; margin: auto;">
+        Copied to clipboard!
+    </div>
+
+    <!-- Participants table -->
+    <div class="text-center mt-4">
+        <h3 style="font-family: 'Arial', sans-serif;">Participants</h3>
+    </div>
+    <div class="table-responsive mx-auto" style="max-width: 600px;">
+        <table class="table table-warning">
+            <thead class="text-center">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Username</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                    <tr class="text-center">
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ member.username }}</td>
+                    </tr>
+                {% empty %}
+                    <tr class="text-center">
+                        <td colspan="2">No participants yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Start quiz button centered at the bottom -->
+    <div class="d-flex justify-content-center mt-4">
+        <form id="start-quiz-form" method="post" 
+            hx-ext="ws" 
+            ws-connect="/ws/quiz/{{ quiz_room.id }}"     
+            ws-send="{'command': 'start_quiz'}">
+            {% csrf_token %}
+            <input type="hidden" name="command" value="start_quiz">
+            <button type="submit" class="btn btn-primary">Start Quiz</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(selector) {
+    const element = document.querySelector(selector);
+    element.select();
+    document.execCommand('copy');
+    document.getElementById('copy-alert').style.display = 'block';
+    setTimeout(() => {
+        document.getElementById('copy-alert').style.display = 'none';
+    }, 2000);
+}
+
+// Redirect the admin directly to the leaderboard page after starting the quiz
+document.querySelector("#start-quiz-form").addEventListener('submit', function() {
+    setTimeout(function() {
+        window.location.href = '/quiz/{{ quiz_room.id }}/leaderboard/';
+    }, 1000);  // slight delay to allow the WebSocket message to process
+});
+</script>
+{% endblock %} {% endcomment %}
+
+{% comment %} {% block content %}
+<div class="container">
+    <!-- Heading -->
+    <div class="text-center" style="margin-top:20px;margin-bottom:20px">
+        <h2 style="font-family: 'Arial', sans-serif;">Manage Quiz Room: {{ quiz_room.room_name }}</h2>
+    </div>
+
+    <!-- Invite link container -->
+    <div class="input-group mb-3 mx-auto" style="max-width: 500px; margin-bottom: 60px;">
+        <input id="invite-link" type="text" class="form-control" value="http://localhost:8000/quiz/{{ quiz_room.id }}/waiting_room/" readonly style="border-color: green;border-width:3px">
+        <button class="btn btn-primary" type="button" onclick="copyToClipboard('#invite-link')">Copy Link</button>
+    </div>
+
+    <!-- Alert for copy success -->
+    <div id="copy-alert" class="alert alert-success text-center" role="alert" style="display:none; max-width: 500px; margin: auto;">
+        Copied to clipboard!
+    </div>
+
+    <!-- Participants table -->
+    <div class="text-center mt-4">
+        <h3 style="font-family: 'Arial', sans-serif;margin-top:40px">Participants</h3>
+    </div>
+    <div class="table-responsive mx-auto" style="max-width: 600px;">
+        <table class="table table-warning">
+            <thead class="text-center">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                    <tr class="text-center">
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ member.username }}</td>
+                        <td>
+                            <form method="post" action="{% url 'remove_participant' quiz_room.id member.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr class="text-center">
+                        <td colspan="3">No participants yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Start quiz button centered at the bottom -->
+    <div class="d-flex justify-content-center mt-4">
+        <form id="start-quiz-form" method="post" 
+            hx-ext="ws" 
+            ws-connect="/ws/quiz/{{ quiz_room.id }}"     
+            ws-send="{'command': 'start_quiz'}">
+            {% csrf_token %}
+            <input type="hidden" name="command" value="start_quiz">
+            <button type="submit" class="btn btn-primary">Start Quiz</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(selector) {
+    const element = document.querySelector(selector);
+    element.select();
+    document.execCommand('copy');
+    document.getElementById('copy-alert').style.display = 'block';
+    setTimeout(() => {
+        document.getElementById('copy-alert').style.display = 'none';
+    }, 2000);
+}
+
+// Redirect the admin directly to the leaderboard page after starting the quiz
+document.querySelector("#start-quiz-form").addEventListener('submit', function() {
+    setTimeout(function() {
+        window.location.href = '/quiz/{{ quiz_room.id }}/leaderboard/';
+    }, 1000);  // slight delay to allow the WebSocket message to process
+});
+</script>
+{% endblock %} {% endcomment %}
+
+{% block content %}
+<div class="container">
+    <!-- Heading -->
+    <div class="text-center" style="margin-top:20px;margin-bottom:20px">
+        <h2 style="font-family: 'Arial', sans-serif;">Manage Quiz Room: {{ quiz_room.room_name }}</h2>
+    </div>
+
+    <!-- Invite link container -->
+    <div class="input-group mb-3 mx-auto" style="max-width: 500px; margin-bottom: 60px;">
+        <input id="invite-link" type="text" class="form-control" value="http://localhost:8000/quiz/{{ quiz_room.id }}/waiting_room/" readonly style="border-color: green;border-width:3px">
+        <button class="btn btn-primary" type="button" onclick="copyToClipboard('#invite-link')">Copy Link</button>
+    </div>
+
+    <!-- Alert for copy success -->
+    <div id="copy-alert" class="alert alert-success text-center" role="alert" style="display:none; max-width: 500px; margin: auto;">
+        Copied to clipboard!
+    </div>
+
+    <!-- Participants table -->
+    <div class="text-center mt-4">
+        <h3 style="font-family: 'Arial', sans-serif;margin-top:40px">Participants</h3>
+    </div>
+    <div class="table-responsive mx-auto" style="max-width: 600px;">
+        <table class="table table-warning">
+            <thead class="text-center">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody id="participants-list">
+                {% if members %}
+                    {% for member in members %}
+                    <tr class="text-center">
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ member.username }}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="remove('{{ member.id }}')">Remove</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr class="text-center"><td colspan="3">No participants yet.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Start quiz button centered at the bottom -->
+    <div class="d-flex justify-content-center mt-4">
+        <form id="start-quiz-form" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="command" value="start_quiz">
+            <button type="submit" class="btn btn-primary">Start Quiz</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const ws = new WebSocket('ws://' + window.location.host + '/ws/quiz/{{ quiz_room.id }}');
+
+function copyToClipboard(selector) {
+    const element = document.querySelector(selector);
+    element.select();
+    document.execCommand('copy');
+    document.getElementById('copy-alert').style.display = 'block';
+    setTimeout(() => {
+        document.getElementById('copy-alert').style.display = 'none';
+    }, 2000);
+}
+
+// Function to update the participants list in the HTML
+function updateParticipantList(participants) {
+    const participantsList = document.getElementById('participants-list');
+    participantsList.innerHTML = '';  // Clear existing list
+
+    if (participants.length === 0) {
+        participantsList.innerHTML = '<tr class="text-center"><td colspan="3">No participants yet.</td></tr>';
+    } else {
+        participants.forEach((participant, index) => {
+            const row = document.createElement('tr');
+            row.classList.add('text-center');
+            row.innerHTML = `
+                <th scope="row">${index + 1}</th>
+                <td>${participant.username}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" onclick="remove('${participant.id}')">Remove</button>
+                </td>
+            `;
+            participantsList.appendChild(row);
+        });
+    }
+}
+
+// Function to send a WebSocket message to remove a participant
+function remove(userId) {
+    const message = JSON.stringify({
+        'command': 'remove_participant',
+        'user_id': userId
+    });
+    ws.send(message);
+}
+
+// WebSocket setup
+ws.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+
+    if (data.event === 'update_participant_list') {
+        updateParticipantList(data.participants);
+    }
+}
+
+// Redirect the admin directly to the leaderboard page after starting the quiz
+document.querySelector("#start-quiz-form").addEventListener('submit', function(e) {
+    e.preventDefault();  // Prevent form submission to avoid page reload
+
+    // Send a WebSocket message to start the quiz
+    ws.send(JSON.stringify({'command': 'start_quiz'}));
+
     setTimeout(function() {
         window.location.href = '/quiz/{{ quiz_room.id }}/leaderboard/';
     }, 1000);  // slight delay to allow the WebSocket message to process

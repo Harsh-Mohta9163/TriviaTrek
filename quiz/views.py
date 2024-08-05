@@ -57,6 +57,7 @@ def manage_quiz_room(request, quiz_room_id):
 @login_required
 def waiting_room(request, quiz_room_id):
     quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
+    
     return render(request, 'quiz/waiting_room.html', {'quiz_room': quiz_room})
 
    
