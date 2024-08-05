@@ -12,10 +12,12 @@
         .dropdown-custom-margin {
             margin-right: 50px; /* Adjust the value as needed */
         }
-
+        
         /* Ensure the width is applied */
         .dropdown-menu.custom-width {
-            width: 100px !important; /* Use !important to override any conflicting styles */
+            min-width: 100px !important; /* Minimum width */
+            max-width: 150px !important; /* Maximum width */
+            width: auto; 
         }
     </style>
     {% block head %} {% endblock %}
@@ -44,7 +46,6 @@
                             <img src="{{ user.profile.image.url }}" alt="" width="32" height="32" class="rounded-circle me-2">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark text-small shadow custom-width" aria-labelledby="dropdownUser1"> <!-- Added custom class here -->
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
                             <li><a class="dropdown-item" href="{%url "profile" %}">Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
