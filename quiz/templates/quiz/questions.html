@@ -207,7 +207,7 @@
         // Continue the timer until it reaches 0
     }
 
-    function evaluateAnswer() {
+    {% comment %} function evaluateAnswer() {
         if (!selectedOptionElement) return;
         const selectedOption = selectedOptionElement.getAttribute('data-option');
         //const selectedOption = selectedOptionElement ? selectedOptionElement.getAttribute('data-option') : null;
@@ -241,8 +241,50 @@
 
             setTimeout(loadNextQuestion, 2000);
         });
+    } {% endcomment %}
+    function evaluateAnswer() {
+        if (selectedOptionElement) {
+            const selectedOption = selectedOptionElement.getAttribute('data-option');
+            const questionNumber = document.getElementById('question-container').getAttribute('data-question-number');
+            const quizRoomId = "{{ quiz_room.id }}";
+    
+            fetch(`/quiz/${quizRoomId}/check-answer/${questionNumber}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ selected_option: selectedOption })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.is_correct) {
+                    selectedOptionElement.classList.remove('selected');
+                    selectedOptionElement.classList.add('correct');
+                } else {
+                    selectedOptionElement.classList.remove('selected');
+                    selectedOptionElement.classList.add('wrong');
+                }
+    
+                // Send data to WebSocket
+                quizSocket.send(JSON.stringify({
+                    'command':  'update_score',
+                    'is_correct': data.is_correct,
+                    'time_left': timeLeft
+                }));
+    
+                setTimeout(loadNextQuestion, 2000);
+            })
+            .catch(error => {
+                console.error('Error checking answer:', error);
+                setTimeout(loadNextQuestion, 2000); // Ensure the next question loads even if there's an error
+            });
+        } else {
+            // No option selected, just move to the next question
+            setTimeout(loadNextQuestion, 2000);
+        }
     }
-
+    
 
     function loadNextQuestion() {
         const questionNumber = parseInt(document.getElementById('question-container').getAttribute('data-question-number')) + 1;
