@@ -10,8 +10,9 @@ from django.http import JsonResponse, HttpResponse
 import json
 
 def home_view(request):
+    user=request.user
     if request.user.is_authenticated:
-        return render(request, 'quiz/authenticated_home.html')
+        return render(request, 'quiz/authenticated_home.html',{'user':user})
     else:
         return render(request, 'quiz/home.html')
 

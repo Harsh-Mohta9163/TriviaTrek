@@ -24,7 +24,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="{%url "home"%}">
                 <img src="{% static 'img/logo.png' %}" alt="" width="30" height="24" class="d-inline-block align-text-top">
                 TriviaTrek
             </a>
@@ -41,7 +41,7 @@
                 <div class="d-flex align-items-center ms-auto">
                     <div class="dropdown dropdown-custom-margin"> <!-- Added custom class here -->
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                            <img src="{{ user.profile.image.url }}" alt="" width="32" height="32" class="rounded-circle me-2">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark text-small shadow custom-width" aria-labelledby="dropdownUser1"> <!-- Added custom class here -->
                             <li><a class="dropdown-item" href="#">Settings</a></li>

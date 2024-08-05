@@ -210,7 +210,7 @@ document.querySelector("#start-quiz-form").addEventListener('submit', function()
 {% endblock %} {% endcomment %}
 
 {% block content %}
-<div class="container">
+<div class="container"  style="background-color: #f0f0f0; padding: 20px; border-radius: 10px;margin-top:40px">
     <!-- Heading -->
     <div class="text-center" style="margin-top:20px;margin-bottom:20px">
         <h2 style="font-family: 'Arial', sans-serif;">Manage Quiz Room: {{ quiz_room.room_name }}</h2>
@@ -267,6 +267,11 @@ document.querySelector("#start-quiz-form").addEventListener('submit', function()
         </form>
     </div>
 </div>
+        <!-- Link to Profile Page -->
+        <div class="text-center mt-4" style="margin-top: 40px;">
+            <p>You can access this page from your <a href="{% url 'profile' %}">Profile</a>.</p>
+        </div>
+    </div>
 
 <script>
 const ws = new WebSocket('ws://' + window.location.host + '/ws/quiz/{{ quiz_room.id }}');
