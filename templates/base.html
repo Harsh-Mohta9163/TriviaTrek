@@ -1,5 +1,6 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
+
 <html>
 <head>
     <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
@@ -12,7 +13,7 @@
         .dropdown-custom-margin {
             margin-right: 50px; /* Adjust the value as needed */
         }
-        
+
         /* Ensure the width is applied */
         .dropdown-menu.custom-width {
             min-width: 100px !important; /* Minimum width */
@@ -20,7 +21,10 @@
             width: auto; 
         }
     </style>
-    {% block head %} {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
+    {% block head %} 
+    
+    {% endblock %}
 </head>
 <body>
     <!-- Navbar -->

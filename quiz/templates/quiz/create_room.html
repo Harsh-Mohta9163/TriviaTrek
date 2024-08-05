@@ -1,6 +1,15 @@
 {% extends "base.html" %}
+{% block title %}Create Quiz{% endblock title %}
 {% load crispy_forms_tags %}
-{% block title %}Create Room{% endblock title %}
+
+{% comment %} {% block head %}
+.question-box {
+    background-color: #f0f0f0; /* Greyish background color */
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+{% endblock head %} {% endcomment %}
 {% block content %}
     <div class="container">
         <h2>Add Questions to {{ quiz_room.room_name }}</h2>

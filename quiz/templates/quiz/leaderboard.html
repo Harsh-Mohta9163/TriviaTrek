@@ -41,77 +41,84 @@
 </main>
 {% endblock content %}  {% endcomment %}
 {% load static %}
-{% block head %}
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet" />
-<link href="{% static 'css/leaderboard.css' %}" rel="stylesheet" />
-{% endblock head %}
-{% block content %}
-<main>
-    <div id="header">
-        <h1>Ranking</h1>
-        <button class="share">
-            <i class="ph ph-share-network"></i>
-        </button>
-    </div>
-    <div id="leaderboard">
-        <div class="ribbon"></div>
-        <table id="leaderboard-table">
-            {% for entry in leaderboard_data %}
-            <tr>
-                <td class="number">{{ entry.number }}</td>
-                <td class="name">{{ entry.name }}</td>
-                <td class="points">
-                    {{ entry.points }}
-                    {% if entry.number == 1 %}
-                    <img class="gold-medal" src="https://github.com/malunaridev/Challenges-iCodeThis/blob/master/4-leaderboard/assets/gold-medal.png?raw=true" alt="gold medal" />
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-        <div id="buttons">
-            <button class="exit" onclick="window.location.href='{% url 'home' %}'">Exit</button>
-        </div>
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="{% static 'css/leaderboard.css' %}" rel="stylesheet" />
+    <title>Leaderboard</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
+    </head>
+    <body>
+        <main>
+            <div id="header">
+                <h1>Ranking</h1>
+                <button class="share">
+                    <i class="ph ph-share-network"></i>
+                </button>
+            </div>
+            <div id="leaderboard">
+                <div class="ribbon"></div>
+                <table id="leaderboard-table">
+                    {% for entry in leaderboard_data %}
+                    <tr>
+                        <td class="number">{{ entry.number }}</td>
+                        <td class="name">{{ entry.name }}</td>
+                        <td class="points">
+                            {{ entry.points }}
+                            {% if entry.number == 1 %}
+                            <img class="gold-medal" src="https://github.com/malunaridev/Challenges-iCodeThis/blob/master/4-leaderboard/assets/gold-medal.png?raw=true" alt="gold medal" />
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <div id="buttons">
+                    <button class="exit" onclick="window.location.href='{% url 'home' %}'">Exit</button>
+                </div>
+                
+            </div>
+        </main>
         
-    </div>
-</main>
-
-<script>
-    const quizRoomId = "{{ quiz_room.id }}";
-    const leaderboardSocket = new WebSocket('ws://' + window.location.host + '/ws/quiz/' + quizRoomId);
-
-    leaderboardSocket.onopen = function() {
-        console.log("Connected to WebSocket for leaderboard.");
-    };
-
-    leaderboardSocket.onclose = function() {
-        console.log("Disconnected from WebSocket.");
-    };
-
-    leaderboardSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        if (data.event === 'leaderboard_update') {
-            updateLeaderboard(data.leaderboard_data);
-        }
-    };
-
-    function updateLeaderboard(leaderboardData) {
-        const leaderboardTable = document.getElementById('leaderboard-table');
-        leaderboardTable.innerHTML = '';
-        leaderboardData.forEach(entry => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="number">${entry.number}</td>
-                <td class="name">${entry.name}</td>
-                <td class="points">${entry.points}</td>
-            `;
-            leaderboardTable.appendChild(row);
-        });
-    }
-</script>
-{% endblock content %}
+        <script>
+            const quizRoomId = "{{ quiz_room.id }}";
+            const leaderboardSocket = new WebSocket('ws://' + window.location.host + '/ws/quiz/' + quizRoomId);
+        
+            leaderboardSocket.onopen = function() {
+                console.log("Connected to WebSocket for leaderboard.");
+            };
+        
+            leaderboardSocket.onclose = function() {
+                console.log("Disconnected from WebSocket.");
+            };
+        
+            leaderboardSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                if (data.event === 'leaderboard_update') {
+                    updateLeaderboard(data.leaderboard_data);
+                }
+            };
+        
+            function updateLeaderboard(leaderboardData) {
+                const leaderboardTable = document.getElementById('leaderboard-table');
+                leaderboardTable.innerHTML = '';
+                leaderboardData.forEach(entry => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="number">${entry.number}</td>
+                        <td class="name">${entry.name}</td>
+                        <td class="points">${entry.points}</td>
+                    `;
+                    leaderboardTable.appendChild(row);
+                });
+            }
+        </script>
+    </body>
+</html>

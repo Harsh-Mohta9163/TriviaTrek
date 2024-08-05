@@ -1,4 +1,4 @@
-<div class="question-display">
+{% comment %} <div class="question-display">
     <p><strong>Question:</strong> {{ question.text }}</p>
     <ul>
         <li>A: {{ question.option_a }}</li>
@@ -8,4 +8,22 @@
     </ul>
     <p><strong>Correct Option:</strong> {{ question.correct_option }}</p>
     <p><strong>Score:</strong> {{ question.score_per_question }}</p>
+</div> {% endcomment %}
+<div class="question-box mt-3 p-3">
+    <p><strong>Question {{ question.question_number }}:</strong> {{ question.text }}</p>
+    <ul>
+        <li>A: {{ question.option_a }}</li>
+        <li>B: {{ question.option_b }}</li>
+        <li>C: {{ question.option_c }}</li>
+        <li>D: {{ question.option_d }}</li>
+    </ul>
+    <p><strong>Correct Option:</strong> {{ question.correct_option }}</p>
+    <p><strong>Score:</strong> {{ question.score_per_question }}</p>
 </div>
+ <style>
+    .question-box {
+        background-color: #f8f9fa; /* light greyish background */
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+</style>
