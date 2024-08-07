@@ -38,3 +38,15 @@ class QuestionForm(forms.ModelForm):
                 Submit('add_question', 'Add Another Question', css_class='btn btn-secondary')
             )
         )
+
+    def clean_score_per_question(self):
+        score = self.cleaned_data.get('score_per_question')
+        if score is None or score <= 0:
+            raise forms.ValidationError('Score per question must be greater than zero.')
+        return score
+
+    def clean_time_allotted_per_question(self):
+        time = self.cleaned_data.get('time_allotted_per_question')
+        if time is None or time <= 0:
+            raise forms.ValidationError('Time allotted per question must be greater than zero.')
+        return time
