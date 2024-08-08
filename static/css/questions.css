@@ -91,3 +91,27 @@ body, html {
     background-color: black;
     color: white;
 }
+
+/* Media query for small screens */
+@media only screen and (max-width: 400px) {
+    .timer {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .question-box {
+        
+        padding: 0.8rem;
+        margin-top: 80px;
+    }
+
+    .question {
+        font-size: 1rem;
+    }
+
+    .option {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+}

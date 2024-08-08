@@ -1,0 +1,107 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    background: linear-gradient(to bottom, rgba(92, 77, 66, 0.5) 0%, rgba(92, 77, 66, 0.7) 100%), url("../img/questions_background.jpg");
+    background-size: contain;
+    background-position: center;
+
+}
+
+.buzzer-container {
+    /* text-align: center;
+    position: relative;
+    padding: 100px;
+    padding-right: 130px;
+    padding-left: 130px;
+    background-color: rgba(68, 66, 66, 0.9); 
+    
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);  */
+   
+    /* background: rgba(255, 255, 255, 0.5);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 0 auto;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    position : relative; */
+    background: rgba(255, 255, 255, 0.5);
+    padding: 130px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.buzzer {
+    width: 250px;
+    height: 250px;
+    background-color: red;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.buzzer:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.buzzer:active {
+    transform: scale(1.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* .reset-button-container {
+    margin-top: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 10px;
+    display: inline-block;
+} */
+
+.reset-button {
+    padding: 10px 20px;
+    background-color: blue;
+    color: rgb(230, 231, 248);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top:40px;
+}
+
+.reset-button:hover {
+    background-color: darkblue;
+}
+
+.reset-button:disabled {
+    background-color: #454343;
+    cursor: not-allowed;
+}
+
+.exit-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: grey;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.exit-button:hover {
+    background-color: rgb(70, 80, 225);
+}

@@ -6,6 +6,7 @@ class QuizRoom(models.Model):
     admin = models.ForeignKey(User, on_delete=models.CASCADE)
     members = models.ManyToManyField(User, related_name='quiz_groups', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_buzzer = models.BooleanField(default=False) 
 
     def __str__(self):
         return self.room_name

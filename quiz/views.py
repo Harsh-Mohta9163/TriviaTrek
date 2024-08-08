@@ -16,12 +16,20 @@ def home_view(request):
     else:
         return render(request, 'quiz/home.html')
 
+
 @login_required
 def create_quiz_room(request):
     if request.method == 'POST':
         room_name = request.POST.get('room_name')
+        is_buzzer = request.POST.get('is_buzzer') == 'True'  # Get the is_buzzer value
         if room_name:
-            quiz_room = QuizRoom.objects.create(room_name=room_name, admin=request.user)
+            quiz_room = QuizRoom.objects.create(
+                room_name=room_name, 
+                admin=request.user, 
+                is_buzzer=is_buzzer  # Set is_buzzer based on form input
+            )
+            if is_buzzer:
+                return redirect('manage_quiz_room', quiz_room_id=quiz_room.id)
             return redirect('create_room', quiz_room_id=quiz_room.id)
     return redirect('home')
 
@@ -107,19 +115,25 @@ def check_answer(request, quiz_room_id, question_number):
 @login_required
 def leaderboard(request, quiz_room_id):
     quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
-    
-    # Create score objects for all members except the admin, if they don't already exist
-    for member in quiz_room.members.exclude(id=quiz_room.admin.id):
-        Score.objects.get_or_create(quiz_room=quiz_room, user=member)
-    
-    # Fetch the leaderboard data
-    leaderboard = Score.objects.filter(quiz_room=quiz_room).order_by('-points')
-    leaderboard_data = [
-        {'number': idx + 1, 'name': score.user.username, 'points': score.points}
-        for idx, score in enumerate(leaderboard)
-    ]
-    
-    return render(request, 'quiz/leaderboard.html', {
-        'quiz_room': quiz_room,
-        'leaderboard_data': leaderboard_data
-    })
+    if quiz_room.is_buzzer:
+        return render(request,'quiz/buzzer_leaderboard.html',{'quiz_room':quiz_room})
+    else:
+        # Create score objects for all members except the admin, if they don't already exist
+        for member in quiz_room.members.exclude(id=quiz_room.admin.id):
+            Score.objects.get_or_create(quiz_room=quiz_room, user=member)
+        
+        # Fetch the leaderboard data
+        leaderboard = Score.objects.filter(quiz_room=quiz_room).order_by('-points')
+        leaderboard_data = [
+            {'number': idx + 1, 'name': score.user.username, 'points': score.points}
+            for idx, score in enumerate(leaderboard)
+        ]
+        
+        return render(request, 'quiz/leaderboard.html', {
+            'quiz_room': quiz_room,
+            'leaderboard_data': leaderboard_data
+        })
+
+def buzzer(request,quiz_room_id):
+    quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
+    return render(request,'quiz/buzzer.html',{'quiz_room':quiz_room})

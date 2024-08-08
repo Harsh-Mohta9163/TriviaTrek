@@ -47,11 +47,26 @@ class QuizRoomConsumer(WebsocketConsumer):
             print("hello9")
             user_id = text_data_json.get('user_id')
             self.remove_participant(user_id)
+        elif command == 'buzz_in':
+            user_id = text_data_json.get('user_id')
+            username = text_data_json.get('username')
 
+            # Send the buzz event to the leaderboard and all connected clients
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'buzz_received',
+                    'user_id': user_id,
+                    'username': username
+                }
+            )
         
 
     def handle_quiz_start(self):
-        redirect_url = f'/quiz/{self.quiz_room_id}/questions/'
+        if self.quiz_room.is_buzzer:
+            redirect_url = f'/quiz/{self.quiz_room_id}/buzzer/'
+        else:
+            redirect_url = f'/quiz/{self.quiz_room_id}/questions/'
         
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
@@ -153,3 +168,9 @@ class QuizRoomConsumer(WebsocketConsumer):
             'user_id': event['user_id'],
         }))
 
+    def buzz_received(self, event):
+        self.send(text_data=json.dumps({
+            'event': 'buzz_received',
+            'user_id': event['user_id'],
+            'username': event['username']
+        }))

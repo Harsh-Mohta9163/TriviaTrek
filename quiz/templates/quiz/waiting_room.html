@@ -1,42 +1,4 @@
 {% extends 'base.html' %}
-{% comment %} {% extends 'base.html' %}
-{% block content %}
-<div class="waiting-room">
-    <h2>Waiting Room for Quiz: {{ quiz_room.room_name }}</h2>
-    <p>Please wait for the admin to start the quiz.</p>
-</div>
-
-<script>
-    console.log("JavaScript is running");
-
-    // Establish WebSocket connection
-    const ws = new WebSocket(`ws://${window.location.host}/ws/quiz/{{ quiz_room.id }}`);
-
-    ws.onopen = function() {
-        console.log("WebSocket connection established");
-    };
-
-    ws.onmessage = function(event) {
-        console.log("WebSocket message received:", event.data);
-        const data = JSON.parse(event.data);
-        if (data.event === 'redirect') {
-            console.log("Redirecting to:", data.redirect_url);
-            window.location.href = data.redirect_url;
-        }
-    };
-
-    ws.onclose = function() {
-        console.log("WebSocket connection closed");
-    };
-
-    ws.onerror = function(error) {
-        console.error("WebSocket error:", error);
-    };
-</script>
-
-{% endblock content %} {% endcomment %}
-
-
 {%load static%}
 {% block content %}
 <div class="waiting-room" style="text-align: center; padding: 50px;">
