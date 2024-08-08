@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{%load static%}
+{% load static %}
 {% block content %}
 <div class="waiting-room" style="text-align: center; padding: 50px;">
     <img src="{% static 'img/waiting_room.png' %}" alt="Waiting Room" style="width: 150px; margin-bottom: 15px;">
@@ -9,10 +9,16 @@
     <div class="instructions" style="background-color: #f2f2f2; border-radius: 10px; padding: 20px; margin-top: 30px; display: inline-block; text-align: left; width: 60%;">
         <h3>Instructions:</h3>
         <ol>
+            {% if quiz_room.is_buzzer %}
+            <li>Click on the reset button to reactivate the buzzer after each question.</li>
+            <li>The admin gets the name of the person who clicks the buzzer the fastest.</li>
+            <li>Click on exit once the quiz is done.</li>
+            {% else %}
             <li>Select the option you want to submit. The selected option will turn black.</li>
             <li>You will have a timer for each question, after which the question will change.</li>
             <li>At the end of the time, the background color of the option will turn green if correct and red if wrong.</li>
             <li>Each question has a single choice answer.</li>
+            {% endif %}
         </ol>
     </div>
 </div>
@@ -35,14 +41,12 @@
             window.location.href = data.redirect_url;
         }
         if (data.event === 'redirect_remove') {
-            
             const currentUserId = {{ request.user.id }};
-            console.log(currentUserId)
-            console.log(data.user_id)  // Get the current user's ID from Django context
+            console.log(currentUserId);
+            console.log(data.user_id); // Get the current user's ID from Django context
             if (data.user_id == currentUserId) {
                 console.log("h1");
                 alert(data.alert_message);
-                
                 window.location.href = data.redirect_url;
             }
         }
