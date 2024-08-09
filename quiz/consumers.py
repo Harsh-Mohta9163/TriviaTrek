@@ -60,7 +60,14 @@ class QuizRoomConsumer(WebsocketConsumer):
                     'username': username
                 }
             )
-        
+        elif command == 'next_question':
+            # Broadcast reset_buzzer event to the group
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'reset_buzzer',
+                }
+            )
 
     def handle_quiz_start(self):
         if self.quiz_room.is_buzzer:
@@ -173,4 +180,10 @@ class QuizRoomConsumer(WebsocketConsumer):
             'event': 'buzz_received',
             'user_id': event['user_id'],
             'username': event['username']
+        }))
+    
+    def reset_buzzer(self, event):
+        # Send message to WebSocket to reset the buzzer
+        self.send(text_data=json.dumps({
+            'event': 'reset_buzzer',
         }))

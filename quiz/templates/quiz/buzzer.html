@@ -7,7 +7,7 @@
     <title>Buzzer</title>
     <link href="{% static 'css/buzzer.css' %}" rel="stylesheet" />
 </head>
-<body>
+{% comment %} <body>
     <div class="buzzer-container">
         <div class="buzzer" id="buzzer">Buzz In</div>
         <div class="reset-button-container">
@@ -76,5 +76,71 @@
         });
         
     </script>
+</body> {% endcomment %}
+<body>
+    <div class="buzzer-container">
+        <div class="buzzer" id="buzzer">Buzz In</div>
+        <button class="exit-button" onclick="window.location.href='{% url 'home' %}'">Exit</button>
+        <audio id="buzzSound">
+            <source src="{% static 'buzzer.mp3' %}" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const buzzer = document.getElementById('buzzer');
+            const buzzSound = document.getElementById('buzzSound');
+        
+            const ws = new WebSocket('ws://' + window.location.host + '/ws/quiz/{{ quiz_room.id }}');
+        
+            ws.onopen = function() {
+                console.log("WebSocket connection established");
+            };
+        
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.event === 'buzz_received') {
+                    console.log("Buzz received from:", data.username);
+                } else if (data.event === 'reset_buzzer') {
+                    resetBuzzer();
+                }
+            };
+        
+            ws.onclose = function() {
+                console.log("WebSocket connection closed");
+            };
+        
+            ws.onerror = function(error) {
+                console.error("WebSocket error:", error);
+            };
+
+            function handleBuzz() {
+                buzzSound.play(); // Play sound
+                buzzer.style.pointerEvents = 'none'; // Disable buzzer after click
+        
+                // Send the buzz event to the server
+                ws.send(JSON.stringify({
+                    'command': 'buzz_in',
+                    'user_id': {{ request.user.id }},
+                    'username': '{{ request.user.username }}'
+                }));
+            }
+
+            function resetBuzzer() {
+                buzzer.style.pointerEvents = 'auto'; // Re-enable buzzer
+            }
+        
+            buzzer.addEventListener('click', handleBuzz);
+        
+            document.addEventListener('keydown', function(event) {
+                if (event.code === 'Space') {
+                    event.preventDefault(); // Prevent the default action
+                    handleBuzz(); // Trigger buzzer action
+                }
+            });
+        });
+    </script>
 </body>
 </html>
+</html>
+
