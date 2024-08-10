@@ -68,6 +68,9 @@ class QuizRoomConsumer(WebsocketConsumer):
                     'type': 'reset_buzzer',
                 }
             )
+        elif command == 'tab_change':
+            username = text_data_json.get('username')
+            self.handle_tab_change(username)
 
     def handle_quiz_start(self):
         if self.quiz_room.is_buzzer:
@@ -186,4 +189,21 @@ class QuizRoomConsumer(WebsocketConsumer):
         # Send message to WebSocket to reset the buzzer
         self.send(text_data=json.dumps({
             'event': 'reset_buzzer',
+        }))
+
+    def handle_tab_change(self, username):
+        # Notify the admin about the tab change
+        async_to_sync(self.channel_layer.group_send)(
+             self.room_group_name, 
+            {
+                'type': 'tab_change_alert',
+                'username': username,
+            }
+        )
+    
+    def tab_change_alert(self, event):
+        self.send(text_data=json.dumps({
+            'event': 'tab_change_alert',
+            'username': event['username'],
+            'message': 'A participant has changed their tab.'
         }))

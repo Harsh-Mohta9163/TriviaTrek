@@ -62,6 +62,9 @@
                 if (data.event === 'leaderboard_update') {
                     updateLeaderboard(data.leaderboard_data);
                 }
+                else if (data.event === 'tab_change_alert') {
+                    alert(`Participant ${data.username} has changed their tab!`);
+                }
             };
         
             function updateLeaderboard(leaderboardData) {

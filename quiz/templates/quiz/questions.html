@@ -22,7 +22,8 @@
     let timerInterval;
     let selectedOptionElement = null;
     let timeLeft; // Global variable to store the time left when an option is selected
-
+ 
+    let isFinalQuestion = true; 
     // Initialize WebSocket connection
     const quizSocket = new WebSocket(
         'ws://' + window.location.host + '/ws/quiz/{{ quiz_room.id }}'
@@ -128,6 +129,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.quiz_finished) {
+                    isFinalQuestion = false;
                     window.location.href = "/quiz/{{ quiz_room.id }}/leaderboard/";
                 } else {
                     document.getElementById('question-container').innerHTML = data.html;
@@ -153,6 +155,21 @@
         const timeLimit = parseInt(document.getElementById('question-container').getAttribute('data-time-limit'));
         startTimer(timeLimit);
     };
+
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+            // Show alert only if it's the final question
+            if (isFinalQuestion) {
+                // Notify admin about tab change
+                quizSocket.send(JSON.stringify({
+                    'command': 'tab_change',
+                    'status': 'hidden',
+                    'username': '{{ user.username }}'
+                }));
+                alert('You have switched tabs! Admin has been alerted');
+            }
+        }
+    });
 </script>
 
 </body>

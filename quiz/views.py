@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponse
 import json
-
+from django.contrib.auth.models import User
 def home_view(request):
     user=request.user
     if request.user.is_authenticated:
@@ -76,27 +76,30 @@ def questions(request, quiz_room_id):
     quiz_room = get_object_or_404(QuizRoom, id=quiz_room_id)
     question_number = int(request.GET.get('question_number', 1))
     current_question = quiz_room.questions.order_by('question_number').filter(question_number=question_number).first()
-    
+    user_id = request.user.id 
+    user = get_object_or_404(User, id=user_id)
+    print(f"user_id={user_id}")
     if current_question is None:
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({'quiz_finished': True})
         return render(request, 'quiz/leaderboard.html')
 
+    context = {
+        'quiz_room': quiz_room,
+        'current_question': current_question,
+        'user': user,  # Add this line to pass user ID to the template
+        'is_final_question': current_question.question_number == quiz_room.questions.count()  # Flag for final question
+    }
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        html = render_to_string('quiz/partials/quiz_display.html', {
-            'quiz_room': quiz_room, 
-            'current_question': current_question
-        })
+        html = render_to_string('quiz/partials/quiz_display.html', context)
         return JsonResponse({
             'html': html,
             'question_number': current_question.question_number,
-            'time_limit': current_question.time_allotted_per_question
+            'time_limit': current_question.time_allotted_per_question,
+            'is_final_question': context['is_final_question']
         })
 
-    return render(request, 'quiz/questions.html', {
-        'quiz_room': quiz_room,
-        'current_question': current_question
-    })
+    return render(request, 'quiz/questions.html', context)
 
 @login_required
 def check_answer(request, quiz_room_id, question_number):
