@@ -31,6 +31,120 @@
         .card {
             margin-bottom: 20px;
         }
+        {% comment %} @media (max-width: 768px) {
+            .header-masthead {
+                padding-top: 5rem;
+                padding-bottom: calc(5rem - 4.5rem);
+            }
+        
+            .content-container {
+                width: 90%;
+                padding: 15px;
+            }
+        
+            .input-group input,
+            .input-group button {
+                font-size: 0.9rem;
+                padding: 8px;
+                margin-bottom:10px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .header-masthead {
+                padding-top: 3rem;
+                padding-bottom: calc(3rem - 4.5rem);
+            }
+        
+            .content-container {
+                width: 95%;
+                padding: 10px;
+            }
+        
+            .input-group input,
+            .input-group button {
+                font-size: 0.8rem;
+                padding: 7px;
+                width: 100%;
+                margin-bottom:10px;
+            }
+        }
+        @media (max-width: 412px) {
+            .header-masthead {
+                padding-top: 3rem;
+                padding-bottom: calc(3rem - 4.5rem);
+            }
+        
+            .content-container {
+                width: 95%;
+                padding: 10px;
+            }
+        
+            .input-group input,
+            .input-group button {
+                font-size: 0.8rem;
+                padding: 7px;
+                width: 100%;
+                margin-bottom:10px;
+            }
+        } {% endcomment %}
+        @media (max-width: 768px) {
+            .header-masthead {
+                padding-top: 5rem;
+                padding-bottom: 5rem;
+            }
+        
+            .content-container {
+                width: 90%; /* More flexible width for smaller screens */
+                padding: 15px; /* Adjust padding */
+            }
+        
+            .input-group .form-control, .input-group .btn {
+                font-size: 0.9rem; /* Slightly smaller font size */
+            }
+            
+            .input-group {
+                flex-direction: column; /* Stack inputs vertically */
+            }
+            
+            .input-group .form-control {
+                width: 100%;
+                margin-bottom: 10px; /* Add some space between input and button */
+            }
+            
+            .input-group .btn {
+                width: 100%; /* Make button full width */
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .header-masthead {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+        
+            .content-container {
+                width: 95%; /* Even more flexibility */
+                padding: 10px; /* Adjust padding */
+            }
+        
+            .input-group .form-control, .input-group .btn {
+                font-size: 0.8rem; /* Even smaller font size for very small screens */
+            }
+        
+            .input-group {
+                flex-direction: column; /* Stack inputs vertically */
+            }
+        
+            .input-group .form-control {
+                width: 100%;
+                margin-bottom: 10px; /* Add some space between input and button */
+            }
+        
+            .input-group .btn {
+                width: 100%; /* Make button full width */
+            }
+        }
     </style>
    
 {% endblock %}

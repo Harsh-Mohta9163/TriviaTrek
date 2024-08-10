@@ -93,25 +93,31 @@ body, html {
 }
 
 /* Media query for small screens */
-@media only screen and (max-width: 400px) {
+@media (max-width: 768px) {
     .timer {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
+        width: 80px;
+        height: 80px;
+        font-size: 1.2rem;
     }
 
     .question-box {
-        
-        padding: 0.8rem;
-        margin-top: 80px;
+        width: 90%;
+        height: 60%;
+        padding: 1.5rem;
     }
 
     .question {
-        font-size: 1rem;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .options {
+        max-width: 800px;
     }
 
     .option {
+        margin: 0.5rem 0;
         padding: 0.8rem;
-        font-size: 0.9rem;
+        font-size: 1rem;
     }
 }
