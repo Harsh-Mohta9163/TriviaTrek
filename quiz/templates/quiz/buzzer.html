@@ -6,77 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buzzer</title>
     <link href="{% static 'css/buzzer.css' %}" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
 </head>
-{% comment %} <body>
-    <div class="buzzer-container">
-        <div class="buzzer" id="buzzer">Buzz In</div>
-        <div class="reset-button-container">
-            <button class="reset-button" id="resetButton" disabled>Reset Buzzer</button>
-        </div>
-        <button class="exit-button" onclick="window.location.href='{% url 'home' %}'">Exit</button>
-        <audio id="buzzSound">
-            <source src="{% static 'buzzer.mp3' %}" type="audio/mpeg">
-        </audio>
-    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const buzzer = document.getElementById('buzzer');
-            const resetButton = document.getElementById('resetButton');
-            const buzzSound = document.getElementById('buzzSound');
-        
-            const ws = new WebSocket('ws://' + window.location.host + '/ws/quiz/{{ quiz_room.id }}');
-        
-            ws.onopen = function() {
-                console.log("WebSocket connection established");
-            };
-        
-            ws.onmessage = function(event) {
-                const data = JSON.parse(event.data);
-                if (data.event === 'buzz_received') {
-                    console.log("Buzz received from:", data.username);
-                    // Update UI or trigger any response for the buzz
-                }
-            };
-        
-            ws.onclose = function() {
-                console.log("WebSocket connection closed");
-            };
-        
-            ws.onerror = function(error) {
-                console.error("WebSocket error:", error);
-            };
-        
-            function handleBuzz() {
-                buzzSound.play(); // Play sound
-                resetButton.disabled = false; // Enable reset button
-                buzzer.style.pointerEvents = 'none'; // Disable buzzer after click
-        
-                // Send the buzz event to the server
-                ws.send(JSON.stringify({
-                    'command': 'buzz_in',
-                    'user_id': {{ request.user.id }},
-                    'username': '{{ request.user.username }}'
-                }));
-            }
-        
-            buzzer.addEventListener('click', handleBuzz);
-        
-            document.addEventListener('keydown', function(event) {
-                if (event.code === 'Space') { // Check if the pressed key is the spacebar
-                    event.preventDefault(); // Prevent the default action (scrolling, etc.)
-                    handleBuzz(); // Trigger buzzer action
-                }
-            });
-        
-            resetButton.addEventListener('click', function() {
-                buzzer.style.pointerEvents = 'auto'; // Re-enable buzzer
-                resetButton.disabled = true; // Disable reset button
-            });
-        });
-        
-    </script>
-</body> {% endcomment %}
 <body>
     <div class="buzzer-container">
         <div class="buzzer" id="buzzer">Buzz In</div>
